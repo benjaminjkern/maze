@@ -5,9 +5,31 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="canvas.js"></script>
     <title>uuuu</title>
+    <style>
+        .btn {
+            position: fixed;
+            width: min(20vw, 20vh);
+            height: min(20vw, 20vh);
+            z-index: 2;
+            font-size: min(10vw, 10vh);
+            opacity: 0.5;
+        }
+        
+        .active {
+            background-color: lightgrey
+        }
+        
+        .btn:active {
+            background-color: lightgrey
+        }
+    </style>
 </head>
 
 <body style=" background: lightblue;">
+    <button id="left" class="btn" style="left:calc(min(20vw,20vh)*1);bottom:calc(min(20vw,20vh)*2);">←</button>
+    <button id="up" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*3);">↑</button>
+    <button id="right" class="btn" style="left:calc(min(20vw,20vh)*3);bottom:calc(min(20vw,20vh)*2);">→</button>
+    <button id="down" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*1);">↓</button>
     <canvas id="grid" width=10000 height=10000>
 </body>
 

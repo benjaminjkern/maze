@@ -46,7 +46,7 @@
             return array;
         }
 
-        const PIXELSIZE = 5;
+        const PIXELSIZE = 20;
         const YOUCOLOR = "rgb(255,0,0)"
         const PATHCOLOR = "rgb(255,160,190)"
         let MAZE_WIDTH = 2;
@@ -84,6 +84,13 @@
             ctx.beginPath();
             ctx.rect(pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
             ctx.fill();
+
+            setTimeout(() => {
+                document.getElementById('up').classList.remove("active");
+                document.getElementById('left').classList.remove("active");
+                document.getElementById('down').classList.remove("active");
+                document.getElementById('right').classList.remove("active");
+            }, 500);
         }
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
@@ -120,20 +127,52 @@
                 case 'w':
                 case 'ArrowUp':
                     movePos(0, -1);
+                    document.getElementById('up').classList.add("active");
                     break;
                 case 'a':
                 case 'ArrowLeft':
                     movePos(-1, 0);
+                    document.getElementById('left').classList.add("active");
                     break;
                 case 's':
                 case 'ArrowDown':
                     movePos(0, 1);
+                    document.getElementById('down').classList.add("active");
                     break;
                 case 'd':
                 case 'ArrowRight':
                     movePos(1, 0);
+                    document.getElementById('right').classList.add("active");
                     break;
             }
         }, false);
+
+        window.addEventListener("keyup", (e) => {
+            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                e.preventDefault();
+            }
+            switch (e.key) {
+                case 'w':
+                case 'ArrowUp':
+                    document.getElementById('up').classList.remove("active");
+                    break;
+                case 'a':
+                case 'ArrowLeft':
+                    document.getElementById('left').classList.remove("active");
+                    break;
+                case 's':
+                case 'ArrowDown':
+                    document.getElementById('down').classList.remove("active");
+                    break;
+                case 'd':
+                case 'ArrowRight':
+                    document.getElementById('right').classList.remove("active");
+                    break;
+            }
+        }, false);
+        document.getElementById('up').addEventListener("click", e => movePos(0, -1));
+        document.getElementById('left').addEventListener("click", e => movePos(-1, 0));
+        document.getElementById('down').addEventListener("click", e => movePos(0, 1));
+        document.getElementById('right').addEventListener("click", e => movePos(1, 0));
     });
 })();
