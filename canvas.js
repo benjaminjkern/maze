@@ -178,5 +178,6 @@
         $("#left").on("vclick", e => movePos(-1, 0));
         $("#down").on("vclick", e => movePos(0, 1));
         $("#right").on("vclick", e => movePos(1, 0));
+        document.addEventListener("touchstart", e => alert('hello'));
     });
 })();
