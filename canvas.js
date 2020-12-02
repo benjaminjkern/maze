@@ -170,6 +170,10 @@
                     break;
             }
         }, false);
+        $("#up").on("touchstart", e => movePos(0, -1));
+        $("#left").on("touchstart", e => movePos(-1, 0));
+        $("#down").on("touchstart", e => movePos(0, 1));
+        $("#right").on("touchstart", e => movePos(1, 0));
         $("#up").on("vclick", e => movePos(0, -1));
         $("#left").on("vclick", e => movePos(-1, 0));
         $("#down").on("vclick", e => movePos(0, 1));
