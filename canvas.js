@@ -46,7 +46,7 @@
             return array;
         }
 
-        let PIXELSIZE = Math.ceil((Math.min(window.innerWidth, window.innerHeight) - 20) / 2);
+        let PIXELSIZE = (Math.min(window.innerWidth, window.innerHeight) - 20) / 2;
         const YOUCOLOR = "rgb(255,0,0)"
         const PATHCOLOR = "rgb(255,160,190)"
         let MAZE_WIDTH = 2;
@@ -73,16 +73,16 @@
                     ctx.fill();
                 }
             }
-            ctx.beginPath();
             ctx.fillStyle = "rgb(0,255,0)";
-            ctx.rect((MAZE_WIDTH - 1) * PIXELSIZE, (MAZE_HEIGHT - 1) * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            ctx.beginPath();
+            ctx.rect(Math.floor((MAZE_WIDTH - 1) * PIXELSIZE), Math.floor((MAZE_HEIGHT - 1) * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
             ctx.fill();
 
             pos = [0, 0];
 
             ctx.fillStyle = YOUCOLOR;
             ctx.beginPath();
-            ctx.rect(pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            ctx.rect(Math.floor(pos[0] * PIXELSIZE), Math.floor(pos[1] * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
             ctx.fill();
 
             setTimeout(() => {
@@ -94,7 +94,7 @@
         }
         window.addEventListener('resize', (e) => {
             alert("window resized, restarting");
-            PIXELSIZE = Math.ceil((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH)));
+            PIXELSIZE = (Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH));
             restart();
         });
         const movePos = (x, y) => {
@@ -104,21 +104,21 @@
 
             ctx.beginPath();
             ctx.fillStyle = PATHCOLOR;
-            ctx.rect(pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            ctx.rect(Math.floor(pos[0] * PIXELSIZE), Math.floor(pos[1] * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
             ctx.fill();
 
             pos = newPos;
 
             ctx.beginPath();
             ctx.fillStyle = YOUCOLOR;
-            ctx.rect(pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            ctx.rect(Math.floor(pos[0] * PIXELSIZE), Math.floor(pos[1] * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
             ctx.fill();
 
             if (pos[0] === MAZE_WIDTH - 1 && pos[1] === MAZE_HEIGHT - 1) {
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
                 MAZE_WIDTH *= 2;
                 MAZE_HEIGHT *= 2;
-                PIXELSIZE = Math.ceil((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH)));
+                PIXELSIZE = (Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH));
                 restart();
             }
         }
