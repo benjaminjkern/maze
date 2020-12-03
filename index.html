@@ -4,11 +4,12 @@
 <head>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="canvas.js"></script>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>cool maze time!</title>
     <style>
-        html {
+        body {
             background: lightblue;
-            touch-action: pan-x pan-y;
+            touch-action: manipulation;
         }
         
         .btn {
@@ -21,7 +22,6 @@
             padding-left: 0;
             padding-right: 0;
             background-color: white;
-            touch-action: pan-x pan-y;
         }
         
         .active {
