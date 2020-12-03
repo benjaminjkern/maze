@@ -170,9 +170,34 @@
                     break;
             }
         }, false);
-        $("#up").on("touchstart", e => movePos(0, -1));
-        $("#left").on("touchstart", e => movePos(-1, 0));
-        $("#down").on("touchstart", e => movePos(0, 1));
-        $("#right").on("touchstart", e => movePos(1, 0));
+        document.getElementById('up').addEventListener("touchstart", () => {
+            movePos(0, -1);
+            document.getElementById('up').classList.add("active");
+        });
+        document.getElementById('left').addEventListener("touchstart", () => {
+            movePos(-1, 0);
+            document.getElementById('left').classList.add("active");
+        });
+        document.getElementById('down').addEventListener("touchstart", () => {
+            movePos(0, 1);
+            document.getElementById('down').classList.add("active");
+        });
+        document.getElementById('right').addEventListener("touchstart", () => {
+            movePos(1, 0);
+            document.getElementById('right').classList.add("active");
+        });
+
+        document.getElementById('up').addEventListener("touchend", () => {
+            document.getElementById('up').classList.remove("active");
+        });
+        document.getElementById('left').addEventListener("touchend", () => {
+            document.getElementById('left').classList.remove("active");
+        });
+        document.getElementById('down').addEventListener("touchend", () => {
+            document.getElementById('down').classList.remove("active");
+        });
+        document.getElementById('right').addEventListener("touchend", () => {
+            document.getElementById('right').classList.remove("active");
+        });
     });
 })();

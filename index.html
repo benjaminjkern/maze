@@ -16,23 +16,21 @@
             opacity: 0.5;
             padding-left: 0;
             padding-right: 0;
+            background-color: white;
+            touch-action: manipulation;
         }
         
         .active {
-            background-color: lightgrey
-        }
-        
-        .btn:active {
             background-color: lightgrey
         }
     </style>
 </head>
 
 <body style=" background: lightblue;">
-    <button id="left" class="btn" style="left:calc(min(20vw,20vh)*1);bottom:calc(min(20vw,20vh)*2);">←</button>
-    <button id="up" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*3);">↑</button>
-    <button id="right" class="btn" style="left:calc(min(20vw,20vh)*3);bottom:calc(min(20vw,20vh)*2);">→</button>
-    <button id="down" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*1);">↓</button>
+    <div id="left" class="btn" style="left:calc(min(20vw,20vh)*1);bottom:calc(min(20vw,20vh)*2);">←</div>
+    <div id="up" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*3);">↑</div>
+    <div id="right" class="btn" style="left:calc(min(20vw,20vh)*3);bottom:calc(min(20vw,20vh)*2);">→</div>
+    <div id="down" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*1);">↓</div>
     <canvas id="grid" width=10000 height=10000>
 </body>
 
