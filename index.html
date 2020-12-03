@@ -23,6 +23,7 @@
         }
         
         .btn {
+            display: none;
             position: fixed;
             width: min(20vw, 20vh);
             height: min(20vw, 20vh);
@@ -33,6 +34,12 @@
             padding-right: 0;
             background-color: white;
             touch-action: manipulation;
+        }
+        
+        @media screen and (max-width: 480px) {
+            .btn {
+                display: block;
+            }
         }
         
         .active {

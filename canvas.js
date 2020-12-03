@@ -65,25 +65,16 @@
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
                 for (let y = 0, j = 0; j < myMaze[0].length; y += PIXELSIZE, j++) {
-                    ctx.beginPath();
-                    if (myMaze[i][j]) {
-                        ctx.fillStyle = "rgb(0,0,0)";
-                    } else ctx.fillStyle = "rgb(255,255,255)";
-                    ctx.rect(x, y, PIXELSIZE, PIXELSIZE);
-                    ctx.fill();
+                    if (myMaze[i][j]) drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
+                    else drawRect("rgb(255,255,255)", x, y, PIXELSIZE, PIXELSIZE);
                 }
             }
-            ctx.fillStyle = "rgb(0,255,0)";
-            ctx.beginPath();
-            ctx.rect(Math.floor((MAZE_WIDTH - 1) * PIXELSIZE), Math.floor((MAZE_HEIGHT - 1) * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
-            ctx.fill();
+
+            drawRect("rgb(0,255,0)", (MAZE_WIDTH - 1) * PIXELSIZE, (MAZE_HEIGHT - 1) * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
             pos = [0, 0];
 
-            ctx.fillStyle = YOUCOLOR;
-            ctx.beginPath();
-            ctx.rect(Math.floor(pos[0] * PIXELSIZE), Math.floor(pos[1] * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
-            ctx.fill();
+            drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
             setTimeout(() => {
                 document.getElementById('up').classList.remove("active");
@@ -102,17 +93,12 @@
             if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
             if (myMaze[newPos[0]][newPos[1]]) return;
 
-            ctx.beginPath();
-            ctx.fillStyle = PATHCOLOR;
-            ctx.rect(Math.floor(pos[0] * PIXELSIZE), Math.floor(pos[1] * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
-            ctx.fill();
+            drawRect(PATHCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE)
 
             pos = newPos;
 
-            ctx.beginPath();
-            ctx.fillStyle = YOUCOLOR;
-            ctx.rect(Math.floor(pos[0] * PIXELSIZE), Math.floor(pos[1] * PIXELSIZE), Math.ceil(PIXELSIZE), Math.ceil(PIXELSIZE));
-            ctx.fill();
+            drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+
 
             if (pos[0] === MAZE_WIDTH - 1 && pos[1] === MAZE_HEIGHT - 1) {
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
@@ -123,7 +109,12 @@
             }
         }
 
-        restart();
+        const drawRect = (color, x, y, width, height) => {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.rect(Math.floor(x), Math.floor(y), Math.ceil(width), Math.ceil(height));
+            ctx.fill();
+        }
 
         window.addEventListener("keydown", (e) => {
             if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
@@ -205,5 +196,7 @@
         document.getElementById('right').addEventListener("touchend", () => {
             document.getElementById('right').classList.remove("active");
         });
+
+        restart();
     });
 })();
