@@ -199,5 +199,14 @@
         document.getElementById('right').addEventListener("touchend", () => {
             document.getElementById('right').classList.remove("active");
         });
+
+        let doubleTouchStartTimestamp = 0;
+        document.addEventListener("touchstart", event => {
+            const now = +(new Date());
+            if (doubleTouchStartTimestamp + 500 > now) {
+                event.preventDefault();
+            };
+            doubleTouchStartTimestamp = now;
+        });
     });
 })();
