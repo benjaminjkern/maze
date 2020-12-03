@@ -46,7 +46,7 @@
             return array;
         }
 
-        const PIXELSIZE = 20;
+        let PIXELSIZE = Math.ceil((Math.min(window.innerWidth, window.innerHeight) - 20) / 2);
         const YOUCOLOR = "rgb(255,0,0)"
         const PATHCOLOR = "rgb(255,160,190)"
         let MAZE_WIDTH = 2;
@@ -92,6 +92,11 @@
                 document.getElementById('right').classList.remove("active");
             }, 500);
         }
+        window.addEventListener('resize', (e) => {
+            alert("window resized, restarting");
+            PIXELSIZE = Math.ceil((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH)));
+            restart();
+        });
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
             if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
@@ -113,6 +118,7 @@
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
                 MAZE_WIDTH *= 2;
                 MAZE_HEIGHT *= 2;
+                PIXELSIZE = Math.ceil((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH)));
                 restart();
             }
         }
