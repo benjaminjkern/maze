@@ -5,6 +5,27 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="canvas.js"></script>
     <script crossorigin src="https://unpkg.com/universal-cookie@3/umd/universalCookie.min.js"></script>
+    <script type="text/javascript" src="browserfs.min.js"></script>
+    <script type="text/javascript">
+        // Installs globals onto window:
+        // * Buffer
+        // * require (monkey-patches if already defined)
+        // * process
+        // You can pass in an arbitrary object if you do not wish to pollute
+        // the global namespace.
+        BrowserFS.install(window);
+        // Configures BrowserFS to use the LocalStorage file system.
+        BrowserFS.configure({
+            fs: "LocalStorage"
+        }, function(e) {
+            if (e) {
+                // An error happened!
+                throw e;
+            }
+            // Otherwise, BrowserFS is ready-to-use!
+        });
+    </script>
+
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>cool maze time!</title>
     <style>
