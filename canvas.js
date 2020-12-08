@@ -54,7 +54,6 @@
         let MAZE_HEIGHT = +cookies.get("mazeHeight", { path: "/" }) || 2;
         let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
 
-
         let pos;
         let myMaze;
         let ctx;
