@@ -10,8 +10,9 @@
     <title>cool maze time!</title>
     <style>
         body {
-            background: lightblue;
+            background: white;
             touch-action: manipulation;
+            height: 100vh;
         }
         
         .gridBox {
@@ -55,7 +56,7 @@
     <div id="up" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*3);">↑</div>
     <div id="right" class="btn" style="left:calc(min(20vw,20vh)*3);bottom:calc(min(20vw,20vh)*2);">→</div>
     <div id="down" class="btn" style="left:calc(min(20vw,20vh)*2);bottom:calc(min(20vw,20vh)*1);">↓</div>
-    <div class="gridBox"><canvas id="grid" width=10000 height=10000></div>
+    <div class="gridBox" id="gridBox"><canvas id="grid" width=10000 height=10000></div>
 </body>
 
 </html>

@@ -86,6 +86,9 @@
                 document.getElementById('left').classList.remove("active");
                 document.getElementById('down').classList.remove("active");
                 document.getElementById('right').classList.remove("active");
+                if (!document.body.style.background.startsWith('l'))
+                    document.body.style.background = `linear-gradient(${Math.floor(Math.random()*360)}deg, #${Math.floor(Math.random() * 16777215).toString(16)}, #${Math.floor(Math.random() * 16777215).toString(16)})`;
+
             }, 500);
         }
         window.addEventListener('resize', (e) => {
