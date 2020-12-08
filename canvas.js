@@ -58,14 +58,11 @@
         let myMaze;
         let ctx;
 
-        let cheat;
-
         const restart = () => {
             myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
             document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
             document.getElementById('grid').height = MAZE_HEIGHT * PIXELSIZE;
-            cheat = false;
 
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
@@ -98,10 +95,8 @@
         });
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
-            if (!cheat) {
-                if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
-                if (myMaze[newPos[0]][newPos[1]]) return;
-            }
+            if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
+            if (myMaze[newPos[0]][newPos[1]]) return;
 
             drawRect(PATHCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE)
 
@@ -154,9 +149,6 @@
                     movePos(1, 0);
                     document.getElementById('right').classList.add("active");
                     break;
-                case 'Shift':
-                    cheat = true;
-                    break;
             }
         }, false);
 
@@ -181,8 +173,6 @@
                 case 'ArrowRight':
                     document.getElementById('right').classList.remove("active");
                     break;
-                case 'Shift':
-                    cheat = false;
             }
         }, false);
         document.getElementById('up').addEventListener("touchstart", () => {
