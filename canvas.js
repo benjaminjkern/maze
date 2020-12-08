@@ -48,11 +48,12 @@
 
         const cookies = new UniversalCookie();
 
-        let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / 2));
         const YOUCOLOR = "rgb(255,0,0)"
         const PATHCOLOR = "rgb(255,160,190)"
         let MAZE_WIDTH = +cookies.get("mazeWidth", { path: "/" }) || 2;
         let MAZE_HEIGHT = +cookies.get("mazeHeight", { path: "/" }) || 2;
+        let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
+
 
         let pos;
         let myMaze;
