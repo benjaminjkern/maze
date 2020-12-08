@@ -4,6 +4,7 @@
 <head>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="canvas.js"></script>
+    <script crossorigin src="https://unpkg.com/universal-cookie@3/umd/universalCookie.min.js"></script>
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>cool maze time!</title>
     <style>
@@ -13,9 +14,9 @@
         }
         
         .gridBox {
-            overflow: hidden;
-            width: calc(100vw - 20px);
-            height: calc(100vh - 20px);
+            overflow: scroll;
+            max-width: calc(100vw - 20px);
+            max-height: calc(100vh - 20px);
         }
         
         canvas {
