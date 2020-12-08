@@ -47,7 +47,6 @@
         }
 
         const cookies = new UniversalCookie();
-        console.log(BrowserFS);
 
         let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / 2));
         const YOUCOLOR = "rgb(255,0,0)"
