@@ -52,8 +52,6 @@
         let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
         let ctx;
 
-        alert(myMaze);
-
         let MAZE_WIDTH = myMaze[0].length || 2;
         let MAZE_HEIGHT = myMaze.length || 2;
         let PIXELSIZE;
@@ -70,14 +68,16 @@
                 myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
                 pos = [0, 0];
             }
-            cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
-            cookies.set("pos", pos.join(','), { path: "/" });
 
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
             document.getElementById('grid').height = MAZE_HEIGHT * PIXELSIZE;
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
+            alert(myMaze);
+
+            cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
+            cookies.set("pos", pos.join(','), { path: "/" });
 
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
