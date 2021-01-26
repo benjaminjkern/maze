@@ -54,11 +54,19 @@
 
         let MAZE_WIDTH = myMaze[0].length || 2;
         let MAZE_HEIGHT = myMaze.length || 2;
-        let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
+        let PIXELSIZE;
 
         const restart = (newMaze = true) => {
-            if (newMaze) myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
+            if (!pos[0] && !pos[1] && myMaze[0][1] && myMaze[1][0]) newMaze = true;
+
+            if (newMaze) {
+                MAZE_HEIGHT = 2;
+                MAZE_WIDTH = 2;
+                myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
+                pos = [0, 0];
+            }
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
+            PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
             document.getElementById('grid').height = MAZE_HEIGHT * PIXELSIZE;
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
@@ -73,9 +81,6 @@
             }
 
             drawRect("rgb(255,255,0)", (MAZE_WIDTH - 1) * PIXELSIZE, (MAZE_HEIGHT - 1) * PIXELSIZE, PIXELSIZE, PIXELSIZE);
-
-            if (newMaze) pos = [0, 0];
-
             drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
             setTimeout(() => {
@@ -90,7 +95,6 @@
             }, 500);
         }
         window.addEventListener('resize', (e) => {
-            PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             restart(false);
         });
         const movePos = (x, y) => {
@@ -113,7 +117,6 @@
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
                 MAZE_WIDTH = Math.ceil(1.1 * MAZE_WIDTH);
                 MAZE_HEIGHT = Math.ceil(1.1 * MAZE_HEIGHT);
-                PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
                 restart();
             }
         }
@@ -152,7 +155,6 @@
                     break;
                 case ' ':
                     if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                        PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / 2));
                         restart();
                     }
             }
@@ -199,7 +201,6 @@
         });
         document.getElementById('restart').addEventListener("touchstart", () => {
             if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / 2));
                 restart();
             }
             document.getElementById('restart').classList.add("active");
