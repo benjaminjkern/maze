@@ -107,6 +107,8 @@
         });
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
+            alert(newPos);
+            alert(myMaze);
             if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
             if (myMaze[newPos[0]][newPos[1]]) return;
 
