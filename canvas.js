@@ -83,13 +83,14 @@
                 document.getElementById('left').classList.remove("active");
                 document.getElementById('down').classList.remove("active");
                 document.getElementById('right').classList.remove("active");
+                document.getElementById('restart').classList.remove("active");
                 if (!document.body.style.background)
                     document.body.style.background = `linear-gradient(${Math.floor(Math.random()*360)}deg, #${Math.floor(Math.random() * 16777215).toString(16)}, #${Math.floor(Math.random() * 16777215).toString(16)})`;
 
             }, 500);
         }
         window.addEventListener('resize', (e) => {
-            alert("window resized, restarting");
+            alert("Window resized, Restarting " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             restart();
         });
@@ -99,6 +100,8 @@
             if (myMaze[newPos[0]][newPos[1]]) return;
 
             drawRect(PATHCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE)
+
+            myMaze[pos[0]][pos[1]] = 1;
 
             pos = newPos;
 
@@ -149,6 +152,10 @@
                     movePos(1, 0);
                     document.getElementById('right').classList.add("active");
                     break;
+                case ' ':
+                    alert("Restarting " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
+                    PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
+                    restart();
             }
         }, false);
 
@@ -191,6 +198,12 @@
             movePos(1, 0);
             document.getElementById('right').classList.add("active");
         });
+        document.getElementById('restart').addEventListener("touchstart", () => {
+            alert("Restarting " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
+            PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
+            restart();
+            document.getElementById('restart').classList.add("active");
+        });
 
         document.getElementById('up').addEventListener("touchend", () => {
             document.getElementById('up').classList.remove("active");
@@ -203,6 +216,9 @@
         });
         document.getElementById('right').addEventListener("touchend", () => {
             document.getElementById('right').classList.remove("active");
+        });
+        document.getElementById('restart').addEventListener("touchend", () => {
+            document.getElementById('restart').classList.remove("active");
         });
 
         restart();
