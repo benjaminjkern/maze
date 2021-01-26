@@ -1,7 +1,7 @@
 (() => {
     $(document).ready(function() {
-        const WALL = true;
-        const SPACE = false;
+        const WALL = 1;
+        const SPACE = 0;
 
         const makeMaze = (width, height) => {
             const maze = Array(height).fill(0).map(_ => Array(width).fill(WALL));
@@ -45,15 +45,19 @@
 
         const cookies = new UniversalCookie();
 
+        alert(cookies.get("maze", { path: "/" }));
+
         const YOUCOLOR = "rgb(255,0,0)"
         const PATHCOLOR = "rgb(255,160,190)"
-        let MAZE_WIDTH = +cookies.get("mazeWidth", { path: "/" }) || 2;
-        let MAZE_HEIGHT = +cookies.get("mazeHeight", { path: "/" }) || 2;
-        let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
 
         let pos;
-        let myMaze;
+        let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',')) : [0, 0];
         let ctx;
+
+        let MAZE_WIDTH = myMaze[0].length || 2;
+        let MAZE_HEIGHT = myMaze.length || 2;
+        let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
+
 
         const restart = () => {
             myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
@@ -64,7 +68,8 @@
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
                 for (let y = 0, j = 0; j < myMaze[0].length; y += PIXELSIZE, j++) {
-                    if (myMaze[i][j]) drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
+                    if (myMaze[i][j] === 2) drawRect(PATHCOLOR, x, y, PIXELSIZE, PIXELSIZE);
+                    else if (myMaze[i][j] === 1) drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
                     else drawRect("rgb(255,255,255)", x, y, PIXELSIZE, PIXELSIZE);
                 }
             }
@@ -98,7 +103,9 @@
 
             drawRect(PATHCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE)
 
-            myMaze[pos[0]][pos[1]] = 1;
+            myMaze[pos[0]][pos[1]] = 2;
+
+            cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
 
             pos = newPos;
 
@@ -109,9 +116,6 @@
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
                 MAZE_WIDTH = Math.ceil(1.1 * MAZE_WIDTH);
                 MAZE_HEIGHT = Math.ceil(1.1 * MAZE_HEIGHT);
-
-                cookies.set("mazeWidth", MAZE_WIDTH, { path: "/" });
-                cookies.set("mazeHeight", MAZE_HEIGHT, { path: "/" });
                 PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
                 restart();
             }
@@ -220,6 +224,6 @@
             document.getElementById('restart').classList.remove("active");
         });
 
-        restart();
+        if (myMaze.length <= 2) restart();
     });
 })();
