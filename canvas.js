@@ -49,7 +49,7 @@
         const PATHCOLOR = "rgb(255,160,190)"
 
         let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",") : [0, 0];
-        let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',')) : [0, 0];
+        let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => +v)) : [0, 0];
         let ctx;
 
         let MAZE_WIDTH = myMaze[0].length || 2;
