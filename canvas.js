@@ -62,14 +62,15 @@
             if (reset) {
                 MAZE_HEIGHT = 2;
                 MAZE_WIDTH = 2;
-                cookies.remove("pos", { path: "/" });
-                cookies.remove("maze", { path: "/" });
             }
 
             if (newMaze) {
                 myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
                 pos = [0, 0];
             }
+            cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
+            cookies.set("pos", pos.join(','), { path: "/" });
+
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
@@ -122,7 +123,7 @@
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
                 MAZE_WIDTH = Math.ceil(1.1 * MAZE_WIDTH);
                 MAZE_HEIGHT = Math.ceil(1.1 * MAZE_HEIGHT);
-                restart();
+                restart(false, true);
             }
         }
 
@@ -160,7 +161,7 @@
                     break;
                 case ' ':
                     if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                        restart(true);
+                        restart(true, true);
                     }
             }
         }, false);
@@ -206,7 +207,7 @@
         });
         document.getElementById('restart').addEventListener("touchstart", () => {
             if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                restart(true);
+                restart(true, true);
             }
             document.getElementById('restart').classList.add("active");
         });
@@ -227,6 +228,6 @@
             document.getElementById('restart').classList.remove("active");
         });
 
-        restart(false, myMaze.length <= 2);
+        restart(myMaze.length <= 2, myMaze.length <= 2);
     });
 })();
