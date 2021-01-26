@@ -49,7 +49,7 @@
         const PATHCOLOR = "rgb(255,160,190)"
 
         let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",") : [0, 0];
-        let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => +v)) : [0, 0];
+        let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
         let ctx;
 
         let MAZE_WIDTH = myMaze[0].length || 2;
@@ -80,8 +80,8 @@
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
                 for (let y = 0, j = 0; j < myMaze[0].length; y += PIXELSIZE, j++) {
-                    if (myMaze[i][j] === 2) drawRect(PATHCOLOR, x, y, PIXELSIZE, PIXELSIZE);
-                    else if (myMaze[i][j] === 1) drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
+                    if (myMaze[i][j] - 0 === 2) drawRect(PATHCOLOR, x, y, PIXELSIZE, PIXELSIZE);
+                    else if (myMaze[i][j] - 0 === 1) drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
                     else drawRect("rgb(255,255,255)", x, y, PIXELSIZE, PIXELSIZE);
                 }
             }
