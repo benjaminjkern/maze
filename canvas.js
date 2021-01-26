@@ -48,7 +48,7 @@
         const YOUCOLOR = "rgb(255,0,0)"
         const PATHCOLOR = "rgb(255,160,190)"
 
-        let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",") : [0, 0];
+        let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",").map(v => v - 0) : [0, 0];
         let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
         let ctx;
 
@@ -74,7 +74,6 @@
             document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
             document.getElementById('grid').height = MAZE_HEIGHT * PIXELSIZE;
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
-            alert(myMaze);
 
             cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
             cookies.set("pos", pos.join(','), { path: "/" });
@@ -107,8 +106,6 @@
         });
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
-            alert(newPos);
-            alert(myMaze);
             if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
             if (myMaze[newPos[0]][newPos[1]]) return;
 
