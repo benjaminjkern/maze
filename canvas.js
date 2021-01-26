@@ -153,9 +153,10 @@
                     document.getElementById('right').classList.add("active");
                     break;
                 case ' ':
-                    alert("Restarting " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
-                    PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
-                    restart();
+                    if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
+                        PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / 2));
+                        restart();
+                    }
             }
         }, false);
 
@@ -199,9 +200,10 @@
             document.getElementById('right').classList.add("active");
         });
         document.getElementById('restart').addEventListener("touchstart", () => {
-            alert("Restarting " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
-            PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
-            restart();
+            if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
+                PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / 2));
+                restart();
+            }
             document.getElementById('restart').classList.add("active");
         });
 
