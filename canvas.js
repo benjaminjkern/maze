@@ -56,12 +56,17 @@
         let MAZE_HEIGHT = myMaze.length || 2;
         let PIXELSIZE;
 
-        const restart = (newMaze = true) => {
+        const restart = (reset = false, newMaze = true) => {
             if (!pos[0] && !pos[1] && myMaze[0][1] && myMaze[1][0]) newMaze = true;
 
-            if (newMaze) {
+            if (reset) {
                 MAZE_HEIGHT = 2;
                 MAZE_WIDTH = 2;
+                cookies.remove("pos", { path: "/" });
+                cookies.remove("maze", { path: "/" });
+            }
+
+            if (newMaze) {
                 myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
                 pos = [0, 0];
             }
@@ -95,7 +100,7 @@
             }, 500);
         }
         window.addEventListener('resize', (e) => {
-            restart(false);
+            restart(false, false);
         });
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
@@ -155,7 +160,7 @@
                     break;
                 case ' ':
                     if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                        restart();
+                        restart(true);
                     }
             }
         }, false);
@@ -201,7 +206,7 @@
         });
         document.getElementById('restart').addEventListener("touchstart", () => {
             if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                restart();
+                restart(true);
             }
             document.getElementById('restart').classList.add("active");
         });
