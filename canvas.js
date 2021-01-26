@@ -227,6 +227,6 @@
             document.getElementById('restart').classList.remove("active");
         });
 
-        restart(myMaze.length <= 2);
+        restart(false, myMaze.length <= 2);
     });
 })();
