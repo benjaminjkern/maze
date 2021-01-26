@@ -52,9 +52,6 @@
         let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',')) : [0, 0];
         let ctx;
 
-        alert(cookies.get("maze", { path: "/" }));
-        alert(myMaze);
-
         let MAZE_WIDTH = myMaze[0].length || 2;
         let MAZE_HEIGHT = myMaze.length || 2;
         let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
