@@ -90,9 +90,8 @@
             }, 500);
         }
         window.addEventListener('resize', (e) => {
-            alert("Window resized, Restarting " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
-            restart();
+            restart(false);
         });
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
