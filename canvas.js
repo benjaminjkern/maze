@@ -60,11 +60,12 @@
         let PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
 
 
-        const restart = () => {
-            if (myMaze.length <= 2) myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
+        const restart = (newMaze = true) => {
+            if (newMaze) myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
             document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
             document.getElementById('grid').height = MAZE_HEIGHT * PIXELSIZE;
+            document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
 
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
@@ -225,6 +226,6 @@
             document.getElementById('restart').classList.remove("active");
         });
 
-        restart();
+        restart(myMaze.length <= 2);
     });
 })();
