@@ -52,6 +52,7 @@
         let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',')) : [0, 0];
         let ctx;
 
+        alert(cookies.get("maze", { path: "/" }));
         alert(myMaze);
 
         let MAZE_WIDTH = myMaze[0].length || 2;
