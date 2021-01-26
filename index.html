@@ -13,16 +13,22 @@
             background: white;
             touch-action: manipulation;
             height: 100vh;
+            overflow: hidden;
         }
         
         .gridBox {
-            overflow: scroll;
+            overflow: hidden;
             max-width: calc(100vw - 20px);
             max-height: calc(100vh - 20px);
         }
         
         canvas {
             touch-action: manipulation;
+            overflow-y: scroll;
+            padding-right: 17px;
+            /* Increase/decrease this value for cross-browser compatibility */
+            box-sizing: content-box;
+            /* So the width will be 100% + 17px */
         }
         
         .btn {

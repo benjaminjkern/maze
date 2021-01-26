@@ -8,9 +8,7 @@
             const stack = [
                 [0, 0]
             ];
-            while (stack.length > 0) {
-                addToMaze(maze, stack);
-            }
+            while (stack.length > 0) addToMaze(maze, stack);
             return maze;
         }
 
@@ -20,9 +18,7 @@
             if (!isFree(node, maze) || maze[node[0]][node[1]] === SPACE) return;
             maze[node[0]][node[1]] = SPACE;
             const neighbors = getNeighbors(node);
-            for (let neighbor of neighbors) {
-                stack.push(neighbor);
-            }
+            for (let neighbor of neighbors) stack.push(neighbor);
         }
 
         const isFree = (node, maze) => node[0] >= 0 && node[1] >= 0 && node[0] < maze.length && node[1] < maze[0].length && [...getNeighbors(node), ...getCornerNeighbors(node)].filter(neighbor =>
@@ -71,8 +67,8 @@
 
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
-            document.getElementById('grid').width = MAZE_WIDTH * PIXELSIZE;
-            document.getElementById('grid').height = MAZE_HEIGHT * PIXELSIZE;
+            document.getElementById('grid').width = Math.floor(MAZE_WIDTH * PIXELSIZE);
+            document.getElementById('grid').height = Math.floor(MAZE_HEIGHT * PIXELSIZE);
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
 
             cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
@@ -161,9 +157,7 @@
                     document.getElementById('right').classList.add("active");
                     break;
                 case ' ':
-                    if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                        restart(true, true);
-                    }
+                    if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) restart(true, true);
             }
         }, false);
 
@@ -207,9 +201,7 @@
             document.getElementById('right').classList.add("active");
         });
         document.getElementById('restart').addEventListener("touchstart", () => {
-            if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) {
-                restart(true, true);
-            }
+            if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) restart(true, true);
             document.getElementById('restart').classList.add("active");
         });
 
