@@ -9,7 +9,6 @@
                 [0, 0]
             ];
             while (stack.length > 0) {
-                // printMaze(maze);
                 addToMaze(maze, stack);
             }
             return maze;
@@ -18,8 +17,6 @@
         const addToMaze = (maze, stack) => {
             const r = Math.floor(Math.random() * stack.length);
             const node = stack.splice(r, 1)[0];
-            // const node = stack.pop();
-            // console.log(node);
             if (!isFree(node, maze) || maze[node[0]][node[1]] === SPACE) return;
             maze[node[0]][node[1]] = SPACE;
             const neighbors = getNeighbors(node);
