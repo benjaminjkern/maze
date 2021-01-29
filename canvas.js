@@ -1,5 +1,7 @@
 (() => {
     $(document).ready(function() {
+
+        // MAKE MAZE
         const WALL = 1;
         const SPACE = 0;
 
@@ -39,6 +41,8 @@
             return array;
         }
 
+        // SETUP PAGE
+
         const cookies = new UniversalCookie();
 
         const YOUCOLOR = "rgb(255,0,0)"
@@ -66,13 +70,26 @@
             }
 
             myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
-            PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 20) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
+            PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 34) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             document.getElementById('grid').width = Math.floor(MAZE_WIDTH * PIXELSIZE);
             document.getElementById('grid').height = Math.floor(MAZE_HEIGHT * PIXELSIZE);
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
 
             cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
             cookies.set("pos", pos.join(','), { path: "/" });
+
+            const infoBox = document.getElementById('infoBox')
+
+            if (infoBox) {
+                if (window.innerWidth > window.innerHeight) {
+                    infoBox.style.top = 0;
+                    infoBox.style.left = (document.getElementById('grid').width + 17) + "px";
+                } else {
+                    infoBox.style.top = (document.getElementById('grid').height + 17) + "px";
+                    infoBox.style.left = 0;
+                }
+                infoBox.innerHTML = "You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
+            }
 
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
@@ -86,17 +103,23 @@
             drawRect("rgb(255,255,0)", (MAZE_WIDTH - 1) * PIXELSIZE, (MAZE_HEIGHT - 1) * PIXELSIZE, PIXELSIZE, PIXELSIZE);
             drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
-            setTimeout(() => {
+            setButtonsAndBackground();
+        }
+
+        const setButtonsAndBackground = () => {
+            if (!document.body.style.background) {
                 document.getElementById('up').classList.remove("active");
                 document.getElementById('left').classList.remove("active");
                 document.getElementById('down').classList.remove("active");
                 document.getElementById('right').classList.remove("active");
                 document.getElementById('restart').classList.remove("active");
-                if (!document.body.style.background)
-                    document.body.style.background = `linear-gradient(${Math.floor(Math.random()*360)}deg, #${Math.floor(Math.random() * 16777215).toString(16)}, #${Math.floor(Math.random() * 16777215).toString(16)})`;
-
-            }, 500);
+                document.body.style.background = `linear-gradient(${Math.floor(Math.random()*360)}deg, #${Math.floor(Math.random() * 16777215).toString(16)}, #${Math.floor(Math.random() * 16777215).toString(16)})`;
+                setTimeout(setButtonsAndBackground, 500);
+            }
         }
+
+        // LISTENERS AND STUFF
+
         window.addEventListener('resize', (e) => {
             restart(false, false);
         });
