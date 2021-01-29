@@ -118,7 +118,7 @@ Your highest is ${highest} x ${highest}.`;
                 document.getElementById('right').classList.remove("active");
                 document.getElementById('restart').classList.remove("active");
                 document.body.style.background = `linear-gradient(${Math.floor(Math.random()*360)}deg, #${Math.floor(Math.random() * 16777215).toString(16)}, #${Math.floor(Math.random() * 16777215).toString(16)})`;
-                setTimeout(setButtonsAndBackground, 500);
+                setTimeout(resetStage, 500);
             }
         }
 
@@ -127,6 +127,7 @@ Your highest is ${highest} x ${highest}.`;
         window.addEventListener('resize', (e) => {
             restart(false, false);
         });
+
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
             if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
@@ -211,6 +212,9 @@ Your highest is ${highest} x ${highest}.`;
                     break;
             }
         }, false);
+
+        window.addEventListener("selectstart", (e) => { e.preventDefault() });
+
         document.getElementById('up').addEventListener("touchstart", () => {
             movePos(0, -1);
             document.getElementById('up').classList.add("active");
