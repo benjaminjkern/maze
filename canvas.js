@@ -50,6 +50,7 @@
 
         let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",").map(v => v - 0) : [0, 0];
         let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
+        let highest = cookies.get("highest", { path: "/" }) || 2;
         let ctx;
 
         let MAZE_WIDTH = myMaze[0].length || 2;
@@ -74,9 +75,11 @@
             document.getElementById('grid').width = Math.floor(MAZE_WIDTH * PIXELSIZE);
             document.getElementById('grid').height = Math.floor(MAZE_HEIGHT * PIXELSIZE);
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
+            highest = Math.max(highest, MAZE_HEIGHT);
 
             cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
             cookies.set("pos", pos.join(','), { path: "/" });
+            cookies.set("highest", highest, { path: "/" });
 
             const infoBox = document.getElementById('infoBox')
 
@@ -88,7 +91,8 @@
                     infoBox.style.top = (document.getElementById('grid').height + 17) + "px";
                     infoBox.style.left = 0;
                 }
-                infoBox.innerHTML = "You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
+                infoBox.innerHTML = `You are on ${MAZE_WIDTH} x ${MAZE_HEIGHT}.<p>
+Your highest is ${highest} x ${highest}.`;
             }
 
             ctx = document.getElementById('grid').getContext('2d');
@@ -103,10 +107,10 @@
             drawRect("rgb(255,255,0)", (MAZE_WIDTH - 1) * PIXELSIZE, (MAZE_HEIGHT - 1) * PIXELSIZE, PIXELSIZE, PIXELSIZE);
             drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
-            setButtonsAndBackground();
+            resetStage();
         }
 
-        const setButtonsAndBackground = () => {
+        const resetStage = () => {
             if (!document.body.style.background) {
                 document.getElementById('up').classList.remove("active");
                 document.getElementById('left').classList.remove("active");
