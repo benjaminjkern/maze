@@ -41,9 +41,9 @@
             return array;
         }
 
-        const findSpace = (maze, ...restrict) => {
+        const findSpace = (maze, s = SPACE, ...restrict) => {
             let space = [Math.floor(Math.random() * MAZE_HEIGHT), Math.floor(Math.random() * MAZE_WIDTH)];
-            while (maze[space[0]][space[1]] !== SPACE || restrict.some(restricted => restricted[0] === space[0] && restricted[1] === space[1])) space = [Math.floor(Math.random() * MAZE_HEIGHT), Math.floor(Math.random() * MAZE_WIDTH)];
+            while (maze[space[0]][space[1]] !== s || restrict.some(restricted => restricted[0] === space[0] && restricted[1] === space[1])) space = [Math.floor(Math.random() * MAZE_HEIGHT), Math.floor(Math.random() * MAZE_WIDTH)];
             return space
         }
 
@@ -77,8 +77,6 @@
 
         // SETUP PAGE
 
-        const cookies = new UniversalCookie();
-
         const MAZE_START = 2;
 
         const YOUCOLOR = "rgb(255,0,0)";
@@ -87,23 +85,36 @@
         const ENEMYCOLOR = "rgb(0,0,255)";
         const ENEMYPATHCOLOR = "rgb(160,190,255)";
 
-        let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",").map(v => v - 0) : [0, 0];
-        let enemies = cookies.get("enemyPos", { path: "/" }) ? cookies.get("enemies", { path: "/" }).split(";").map(enemy => enemy.split(',').map(v => v - 0)) : [];
-        let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
-        let highest = cookies.get("highest", { path: "/" }) || MAZE_START;
+        let cookies;
+
+        let pos;
+        let enemies;
+        let myMaze;
+        let highest;
         let ctx;
+        try {
+            cookies = new UniversalCookie();
+            pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",").map(v => v - 0) : [0, 0];
+            enemies = cookies.get("enemyPos", { path: "/" }) ? cookies.get("enemies", { path: "/" }).split(";").map(enemy => enemy.split(',').map(v => v - 0)) : [];
+            myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
+            highest = cookies.get("highest", { path: "/" }) || MAZE_START;
+        } catch (e) {
+            pos = [0, 0];
+            enemies = [];
+            myMaze = [0, 0];
+            highest = MAZE_START;
+        }
 
         let MAZE_WIDTH = myMaze[0].length || MAZE_START;
         let MAZE_HEIGHT = myMaze.length || MAZE_START;
         let PIXELSIZE;
 
-        const restart = (reset = false, newMaze = true, newEnemies = 0) => {
+        const restart = (reset = false, newMaze = true) => {
             if (reset) {
                 MAZE_HEIGHT = MAZE_START;
                 MAZE_WIDTH = MAZE_START;
                 newMaze = true;
                 enemies = [];
-                newEnemies = 0;
             }
 
             if (newMaze) {
@@ -112,10 +123,10 @@
                 const goalPos = [MAZE_WIDTH - 1, MAZE_HEIGHT - 1];
 
                 myMaze[goalPos[0]][goalPos[1]] = 3;
-                const numEnemies = enemies.length + newEnemies;
+                const numEnemies = Math.floor(Math.min(MAZE_WIDTH, MAZE_HEIGHT) / 10);
 
                 enemies = [];
-                Array(numEnemies).fill().forEach(() => enemies.push(findSpace(myMaze, pos, goalPos, ...enemies)));
+                Array(numEnemies).fill().forEach(() => enemies.push(findSpace(myMaze, SPACE, pos, goalPos, ...enemies)));
             }
 
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 34) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
@@ -124,10 +135,12 @@
             document.title = "Cool Maze Time - " + MAZE_WIDTH + " x " + MAZE_HEIGHT;
             highest = Math.max(highest, MAZE_HEIGHT);
 
-            cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
-            cookies.set("pos", pos.join(','), { path: "/" });
-            cookies.set("enemies", enemies.map(line => line.join(',')).join(';'), { path: "/" });
-            cookies.set("highest", highest, { path: "/" });
+            try {
+                cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
+                cookies.set("pos", pos.join(','), { path: "/" });
+                cookies.set("enemies", enemies.map(line => line.join(',')).join(';'), { path: "/" });
+                cookies.set("highest", highest, { path: "/" });
+            } catch (e) {}
 
             const infoBox = document.getElementById('infoBox')
 
@@ -167,16 +180,17 @@ There are currently ${enemies.length} enemies.`;
             drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
             enemies.forEach(enemyPos => drawRect(ENEMYCOLOR, enemyPos[0] * PIXELSIZE, enemyPos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE));
 
+            document.getElementById('up').classList.remove("active");
+            document.getElementById('left').classList.remove("active");
+            document.getElementById('down').classList.remove("active");
+            document.getElementById('right').classList.remove("active");
+            document.getElementById('restart').classList.remove("active");
+
             resetStage();
         }
 
         const resetStage = () => {
             if (!document.body.style.background) {
-                document.getElementById('up').classList.remove("active");
-                document.getElementById('left').classList.remove("active");
-                document.getElementById('down').classList.remove("active");
-                document.getElementById('right').classList.remove("active");
-                document.getElementById('restart').classList.remove("active");
                 document.body.style.background = `linear-gradient(${Math.floor(Math.random()*360)}deg, #${Math.floor(Math.random() * 16777215).toString(16)}, #${Math.floor(Math.random() * 16777215).toString(16)})`;
                 setTimeout(resetStage, 500);
             }
@@ -204,8 +218,8 @@ There are currently ${enemies.length} enemies.`;
             // console.log(newEnemy);
 
             if (enemies.some(enemyPos => pos[0] === enemyPos[0] && pos[1] === enemyPos[1])) {
-                alert("You died! You made it to " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
-                restart(true, true);
+                alert("You died! You were on " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
+                restart(false, true);
                 return;
             }
 
@@ -245,22 +259,23 @@ There are currently ${enemies.length} enemies.`;
             // drawRect(ENEMYCOLOR, enemyPos[0] * PIXELSIZE, enemyPos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
             // drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
-            cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
-            cookies.set("pos", pos.join(','), { path: "/" });
-            cookies.set("enemies", enemies.map(line => line.join(',')).join(';'), { path: "/" });
+            try {
+                cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
+                cookies.set("pos", pos.join(','), { path: "/" });
+                cookies.set("enemies", enemies.map(line => line.join(',')).join(';'), { path: "/" });
+            } catch (e) {}
 
             if (enemies.some(enemyPos => pos[0] === enemyPos[0] && pos[1] === enemyPos[1])) {
-                alert("You died! You made it to " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
-                restart(true, true);
+                alert("You died! You were on " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
+                restart(false, true);
                 return;
             }
 
             if (myMaze[pos[0]][pos[1]] === 3) {
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
-                const oldWidth = Math.floor(MAZE_WIDTH / 10);
                 MAZE_WIDTH = Math.ceil(1.1 * MAZE_WIDTH);
                 MAZE_HEIGHT = Math.ceil(1.1 * MAZE_HEIGHT);
-                restart(false, true, Math.max(Math.floor(MAZE_WIDTH / 10) - oldWidth, 0));
+                restart(false, true);
             }
         }
 
@@ -296,7 +311,7 @@ There are currently ${enemies.length} enemies.`;
                     movePos(1, 0);
                     document.getElementById('right').classList.add("active");
                     break;
-                case ' ':
+                case '':
                     if (confirm("Are you sure you want to give up? You are on " + MAZE_WIDTH + " x " + MAZE_HEIGHT)) restart(true, true);
             }
         }, false);
