@@ -41,36 +41,83 @@
             return array;
         }
 
+        const findSpace = (maze, ...restrict) => {
+            let space = [Math.floor(Math.random() * MAZE_HEIGHT), Math.floor(Math.random() * MAZE_WIDTH)];
+            while (maze[space[0]][space[1]] !== SPACE || restrict.some(restricted => restricted[0] === space[0] && restricted[1] === space[1])) space = [Math.floor(Math.random() * MAZE_HEIGHT), Math.floor(Math.random() * MAZE_WIDTH)];
+            return space
+        }
+
+        let seen = {};
+        const search = (maze, myPos, target) => {
+            const frontier = [
+                [target, 0]
+            ];
+
+            while (frontier.length > 0) {
+                const [thisPos, dist] = frontier.shift();
+                const key = thisPos.join(',');
+                if (seen[key] || thisPos[0] < 0 || thisPos[1] < 0 || thisPos[0] >= maze.length || thisPos[1] >= maze[0].length || maze[thisPos[0]][thisPos[1]] === 1 || maze[thisPos[0]][thisPos[1]] === 3) continue;
+                seen[key] = dist;
+                frontier.push(...getMoves(thisPos).map(p => [p, dist + 1]));
+            }
+            const dists = getMoves(myPos).map(p => [p, seen[p.join(',')] || Number.MAX_VALUE]);
+            const min = dists.reduce((p, c) => Math.min(c[1], p), Number.MAX_VALUE);
+            const minDistPos = dists.filter(p => p[1] === min).map(p => p[0]);
+            return minDistPos[Math.floor(Math.random() * minDistPos.length)];
+        };
+
+        const getMoves = (myPos) => {
+            return [
+                [0, 1],
+                [0, -1],
+                [1, 0],
+                [-1, 0]
+            ].map(dir => move(myPos, dir[0], dir[1]))
+        };
+
         // SETUP PAGE
 
         const cookies = new UniversalCookie();
 
-        const YOUCOLOR = "rgb(255,0,0)"
-        const PATHCOLOR = "rgb(255,160,190)"
+        const MAZE_START = 2;
+
+        const YOUCOLOR = "rgb(255,0,0)";
+        const PATHCOLOR = "rgb(255,160,190)";
+
+        const ENEMYCOLOR = "rgb(0,0,255)";
+        const ENEMYPATHCOLOR = "rgb(160,190,255)";
 
         let pos = cookies.get("pos", { path: "/" }) ? cookies.get("pos", { path: "/" }).split(",").map(v => v - 0) : [0, 0];
+        let enemies = cookies.get("enemyPos", { path: "/" }) ? cookies.get("enemies", { path: "/" }).split(";").map(enemy => enemy.split(',').map(v => v - 0)) : [];
         let myMaze = cookies.get("maze", { path: "/" }) ? cookies.get("maze", { path: "/" }).split(';').map(line => line.split(',').map(v => v - 0)) : [0, 0];
-        let highest = cookies.get("highest", { path: "/" }) || 2;
+        let highest = cookies.get("highest", { path: "/" }) || MAZE_START;
         let ctx;
 
-        let MAZE_WIDTH = myMaze[0].length || 2;
-        let MAZE_HEIGHT = myMaze.length || 2;
+        let MAZE_WIDTH = myMaze[0].length || MAZE_START;
+        let MAZE_HEIGHT = myMaze.length || MAZE_START;
         let PIXELSIZE;
 
-        const restart = (reset = false, newMaze = true) => {
-            if (!pos[0] && !pos[1] && myMaze[0][1] && myMaze[1][0]) newMaze = true;
-
+        const restart = (reset = false, newMaze = true, newEnemies = 0) => {
             if (reset) {
-                MAZE_HEIGHT = 2;
-                MAZE_WIDTH = 2;
+                MAZE_HEIGHT = MAZE_START;
+                MAZE_WIDTH = MAZE_START;
+                newMaze = true;
+                enemies = [];
+                newEnemies = 0;
             }
 
             if (newMaze) {
                 myMaze = makeMaze(MAZE_WIDTH, MAZE_HEIGHT);
                 pos = [0, 0];
+                const goalPos = [MAZE_WIDTH - 1, MAZE_HEIGHT - 1];
+
+                myMaze[goalPos[0]][goalPos[1]] = 3;
+                const numEnemies = enemies.length + newEnemies;
+
+                enemies = [];
+                Array(numEnemies).fill().forEach(() => enemies.push(findSpace(myMaze, pos, goalPos, ...enemies)));
             }
 
-            myMaze[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = SPACE;
             PIXELSIZE = Math.max(5, Math.floor((Math.min(window.innerWidth, window.innerHeight) - 34) / (Math.max(MAZE_HEIGHT, MAZE_WIDTH))));
             document.getElementById('grid').width = Math.floor(MAZE_WIDTH * PIXELSIZE);
             document.getElementById('grid').height = Math.floor(MAZE_HEIGHT * PIXELSIZE);
@@ -79,6 +126,7 @@
 
             cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
             cookies.set("pos", pos.join(','), { path: "/" });
+            cookies.set("enemies", enemies.map(line => line.join(',')).join(';'), { path: "/" });
             cookies.set("highest", highest, { path: "/" });
 
             const infoBox = document.getElementById('infoBox')
@@ -92,20 +140,32 @@
                     infoBox.style.left = 0;
                 }
                 infoBox.innerHTML = `You are on ${MAZE_WIDTH} x ${MAZE_HEIGHT}.<p>
-Your highest is ${highest} x ${highest}.`;
+Your highest is ${highest} x ${highest}.<p>
+There are currently ${enemies.length} enemies.`;
             }
 
             ctx = document.getElementById('grid').getContext('2d');
             for (let x = 0, i = 0; i < myMaze.length; x += PIXELSIZE, i++) {
                 for (let y = 0, j = 0; j < myMaze[0].length; y += PIXELSIZE, j++) {
-                    if (myMaze[i][j] - 0 === 2) drawRect(PATHCOLOR, x, y, PIXELSIZE, PIXELSIZE);
-                    else if (myMaze[i][j] - 0 === 1) drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
-                    else drawRect("rgb(255,255,255)", x, y, PIXELSIZE, PIXELSIZE);
+                    switch (myMaze[i][j] - 0) {
+                        case 3:
+                            drawRect("rgb(0,255,0)", x, y, PIXELSIZE, PIXELSIZE);
+                            break;
+                        case 2:
+                            drawRect(PATHCOLOR, x, y, PIXELSIZE, PIXELSIZE);
+                            break;
+                        case 1:
+                            drawRect("rgb(0,0,0)", x, y, PIXELSIZE, PIXELSIZE);
+                            break;
+                        case 0:
+                            drawRect("rgb(255,255,255)", x, y, PIXELSIZE, PIXELSIZE);
+                            break;
+                    }
                 }
             }
 
-            drawRect("rgb(255,255,0)", (MAZE_WIDTH - 1) * PIXELSIZE, (MAZE_HEIGHT - 1) * PIXELSIZE, PIXELSIZE, PIXELSIZE);
             drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            enemies.forEach(enemyPos => drawRect(ENEMYCOLOR, enemyPos[0] * PIXELSIZE, enemyPos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE));
 
             resetStage();
         }
@@ -131,24 +191,76 @@ Your highest is ${highest} x ${highest}.`;
         const movePos = (x, y) => {
             const newPos = [pos[0] + x, pos[1] + y];
             if (newPos[1] < 0 || newPos[0] < 0 || newPos[1] >= myMaze.length || newPos[0] >= myMaze[0].length) return;
-            if (myMaze[newPos[0]][newPos[1]]) return;
+            if (myMaze[newPos[0]][newPos[1]] === 1) return;
 
-            drawRect(PATHCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE)
+            drawRect(PATHCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
-            myMaze[pos[0]][pos[1]] = 2;
+            seen = {};
+            const newEnemies = enemies.map(enemyPos => search(myMaze, enemyPos, pos));
+
             pos = newPos;
+            drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+
+            // console.log(newEnemy);
+
+            if (enemies.some(enemyPos => pos[0] === enemyPos[0] && pos[1] === enemyPos[1])) {
+                alert("You died! You made it to " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
+                restart(true, true);
+                return;
+            }
+
+            newEnemies.forEach((newEnemy, i) => {
+                if (newEnemy && !(newEnemy[1] < 0 || newEnemy[0] < 0 || newEnemy[1] >= myMaze.length || newEnemy[0] >= myMaze[0].length) && myMaze[newEnemy[0]][newEnemy[1]] !== 1 && myMaze[newEnemy[0]][newEnemy[1]] !== 3) {
+                    drawRect(ENEMYPATHCOLOR, enemies[i][0] * PIXELSIZE, enemies[i][1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+                    enemies[i] = newEnemy;
+                    drawRect(ENEMYCOLOR, enemies[i][0] * PIXELSIZE, enemies[i][1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+                }
+            });
+
+            // for (let nx = 0, i = 0; i < myMaze.length; nx += PIXELSIZE, i++) {
+            //     for (let ny = 0, j = 0; j < myMaze[0].length; ny += PIXELSIZE, j++) {
+            //         switch (myMaze[i][j] - 0) {
+            //             case 3:
+            //                 drawRect("rgb(0,255,0)", nx, ny, PIXELSIZE, PIXELSIZE);
+            //                 break;
+            //             case 2:
+            //                 drawRect(PATHCOLOR, nx, ny, PIXELSIZE, PIXELSIZE);
+            //                 break;
+            //             case 1:
+            //                 drawRect("rgb(0,0,0)", nx, ny, PIXELSIZE, PIXELSIZE);
+            //                 break;
+            //             case 0:
+            //                 drawRect("rgb(255,255,255)", nx, ny, PIXELSIZE, PIXELSIZE);
+            //                 break;
+            //         }
+            //         if (seen[i + "," + j]) {
+            //             ctx.fillStyle = "black";
+            //             ctx.font = "15px Arial";
+            //             ctx.textAlign = "center";
+            //             ctx.fillText(seen[i + "," + j] % 100, nx + PIXELSIZE / 2, ny + PIXELSIZE / 2);
+            //         }
+            //     }
+            // }
+
+            // drawRect(ENEMYCOLOR, enemyPos[0] * PIXELSIZE, enemyPos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            // drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
 
             cookies.set("maze", myMaze.map(line => line.join(',')).join(';'), { path: "/" });
             cookies.set("pos", pos.join(','), { path: "/" });
+            cookies.set("enemies", enemies.map(line => line.join(',')).join(';'), { path: "/" });
 
-            drawRect(YOUCOLOR, pos[0] * PIXELSIZE, pos[1] * PIXELSIZE, PIXELSIZE, PIXELSIZE);
+            if (enemies.some(enemyPos => pos[0] === enemyPos[0] && pos[1] === enemyPos[1])) {
+                alert("You died! You made it to " + MAZE_WIDTH + " x " + MAZE_HEIGHT);
+                restart(true, true);
+                return;
+            }
 
-
-            if (pos[0] === MAZE_WIDTH - 1 && pos[1] === MAZE_HEIGHT - 1) {
+            if (myMaze[pos[0]][pos[1]] === 3) {
                 alert("Congrats! You finished the " + MAZE_WIDTH + " x " + MAZE_HEIGHT + " maze!");
+                const oldWidth = Math.floor(MAZE_WIDTH / 10);
                 MAZE_WIDTH = Math.ceil(1.1 * MAZE_WIDTH);
                 MAZE_HEIGHT = Math.ceil(1.1 * MAZE_HEIGHT);
-                restart(false, true);
+                restart(false, true, Math.max(Math.floor(MAZE_WIDTH / 10) - oldWidth, 0));
             }
         }
 
@@ -252,6 +364,6 @@ Your highest is ${highest} x ${highest}.`;
             document.getElementById('restart').classList.remove("active");
         });
 
-        restart(myMaze.length <= 2, myMaze.length <= 2);
+        restart(myMaze.length <= MAZE_START, myMaze.length <= MAZE_START);
     });
 })();
