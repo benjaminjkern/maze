@@ -25,15 +25,15 @@ const restart = (reset = false, newMaze = true) => {
 
     if (newMaze || reset) {
         _root.myMaze = makeMaze(_root.MAZE_WIDTH, _root.MAZE_HEIGHT);
-        _root.pos = [0, 0];
         const goalPos = [_root.MAZE_WIDTH - 1, _root.MAZE_HEIGHT - 1];
 
+        _root.pos = [0, 0];
         _root.myMaze[goalPos[0]][goalPos[1]] = 2;
 
         const numEnemies = Math.floor(
-            Math.min(_root.MAZE_WIDTH, _root.MAZE_HEIGHT) / 10
+            Math.min(_root.MAZE_WIDTH, _root.MAZE_HEIGHT) / 100
         );
-        _root.enemies = Array(numEnemies)
+        _root.startEnemies = Array(numEnemies)
             .fill()
             .map(() =>
                 findSpace(
@@ -45,6 +45,9 @@ const restart = (reset = false, newMaze = true) => {
                 )
             );
     }
+    _root.enemies = _root.startEnemies.map((e) => [...e]);
+
+    _root.pos = [0, 0];
 
     _root.PIXELSIZE = Math.max(
         5,
@@ -103,7 +106,7 @@ const movePos = (x, y) => {
                 " x " +
                 _root.MAZE_HEIGHT
         );
-        restart();
+        restart(false, false);
         return;
     }
 
@@ -136,7 +139,7 @@ const movePos = (x, y) => {
                 " x " +
                 _root.MAZE_HEIGHT
         );
-        restart();
+        restart(false, false);
         return;
     }
 
